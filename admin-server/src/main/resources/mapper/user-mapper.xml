@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.fuliaoyi.mapper.UserMapper">
+
+    <resultMap id="UserResult" type="com.fuliaoyi.mapper.model.User">
+        <result property="id" column="id"/>
+        <result property="token" column="token"/>
+        <result property="email" column="email"/>
+        <result property="passwordHash" column="password_hash"/>
+        <result property="phoneNumber" column="phone_number"/>
+        <result property="name" column="name"/>
+        <result property="gender" column="gender"/>
+        <result property="avatarURL" column="avatar_url"/>
+        <result property="birthday" column="birthday"/>
+        <result property="profession" column="profession"/>
+        <result property="hobbies" column="hobbies"/>
+        <result property="topic" column="topic"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+
+    <select id="selectById" resultMap="UserResult">
+        select * from User where id = #{id}
+    </select>
+
+    <select id="selectByPhoneNumber" resultMap="UserResult">
+        select * from User where phone_number = #{phoneNumber}
+    </select>
+
+    <select id="selectByEmail" resultMap="UserResult">
+        select * from User where email = #{email}
+    </select>
+
+    <select id="selectByToken" resultMap="UserResult">
+        select * from User where token = #{token}
+    </select>
+
+    <select id="selectByIds" resultMap="UserResult">
+        select * from User
+        where id in
+        <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        ORDER BY FIELD(id,
+            <foreach item="item" index="index" collection="list" open="" separator="," close="">
+                #{item}
+            </foreach>
+        )
+    </select>
+
+    <insert id="insert">
+        insert into User(id, phone_number, email, password_hash, token, name, gender, birthday, avatar_url, profession, hobbies, time_created, time_updated)
+        values (#{id}, #{phoneNumber}, #{email}, #{passwordHash}, #{token}, #{name}, #{gender}, #{birthday}, #{avatarURL}, #{profession}, #{hobbies}, UNIX_TIMESTAMP(), UNIX_TIMESTAMP())
+    </insert>
+
+    <update id="updateProfileById">
+        update User
+        set name = #{name}, gender = #{gender}, birthday = #{birthday}, avatar_url = #{avatarURL}, profession = #{profession}, hobbies = #{hobbies}, time_updated = UNIX_TIMESTAMP()
+        where id = #{id}
+    </update>
+
+    <update id="updateTokenById">
+        update User
+        set token = #{token}, time_updated = UNIX_TIMESTAMP()
+        where id = #{id}
+    </update>
+
+    <update id="updateTopicById">
+        update User
+        set topic = #{topic}, time_updated = UNIX_TIMESTAMP()
+        where id = #{id}
+    </update>
+</mapper>
